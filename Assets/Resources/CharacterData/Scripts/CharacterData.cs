@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CharacterData : ScriptableObject
 {
-    public GameObject _prefab;
+    public Object _prefab;
     public float _maxHealth;
     public float _maxEnergy;
     public float _critChance;

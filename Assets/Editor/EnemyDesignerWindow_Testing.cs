@@ -45,6 +45,7 @@ public class EnemyDesignerWindow_Testing : EditorWindow
 
     private void OnEnable()
     {
+        OpenWindow();
         InitSectionVisuals();
         InitData();
     }
@@ -234,21 +235,23 @@ public class GeneralSettings_Testing: EditorWindow
         WARRIOR
     }
 
-    static SettingsType_Testing dataSetting;
-    static GeneralSettings_Testing window;
+    static SettingsType_Testing _dataSetting;
+    static GeneralSettings_Testing _window;
+
+    bool _charIsSaved = false;
 
     public static void OpenWindow(SettingsType_Testing setting)
     {
-        dataSetting = setting;
-        window = (GeneralSettings_Testing)GetWindow(typeof(GeneralSettings_Testing));
-        window.titleContent = new GUIContent(setting.ToString().Substring(0, 1) + setting.ToString().Substring(1).ToLower() + " Setup"); ;
-        window.minSize = new Vector2(250, 200);
-        window.Show();
+        _dataSetting = setting;
+        _window = (GeneralSettings_Testing)GetWindow(typeof(GeneralSettings_Testing));
+        _window.titleContent = new GUIContent(setting.ToString().Substring(0, 1) + setting.ToString().Substring(1).ToLower() + " Setup"); ;
+        _window.minSize = new Vector2(250, 200);
+        _window.Show();
     }
 
     private void OnGUI()
     {
-        switch (dataSetting)
+        switch (_dataSetting)
         {
             case SettingsType_Testing.MAGE:
                 DrawSettings((CharacterData)EnemyDesignerWindow_Testing.MageInfo_Testing);
@@ -264,6 +267,11 @@ public class GeneralSettings_Testing: EditorWindow
     
     void DrawSettings(CharacterData charData)
     {
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Prefab");
+        charData._prefab = EditorGUILayout.ObjectField(charData._prefab, typeof(GameObject), false);
+        EditorGUILayout.EndHorizontal();
+
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Max Health");
         charData._maxHealth = EditorGUILayout.FloatField(charData._maxHealth);
@@ -290,5 +298,76 @@ public class GeneralSettings_Testing: EditorWindow
         GUILayout.Label("Enemy Name");
         charData._name = EditorGUILayout.TextField(charData._name);
         EditorGUILayout.EndHorizontal();
+
+        DrawConfirmationButtons(charData);
     }
+
+    void DrawConfirmationButtons(CharacterData charData)
+    {
+        bool isSaveable = false;
+        bool exitConfirmation = false;
+
+        EditorGUILayout.BeginVertical();
+        if (charData._prefab == null)
+        {
+            EditorGUILayout.HelpBox("This enemy needs a [Prefab] before it can be created.", MessageType.Error);
+            isSaveable = false;
+        }
+        if (charData._name == null)
+        {
+            EditorGUILayout.HelpBox("This enemy needs a [Name] before it can be created.", MessageType.Error);
+            isSaveable = false;
+        }
+        if (charData._prefab != null && charData._name != null)
+        {
+            isSaveable = true;
+        }
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Save & Exit", GUILayout.Width(Screen.width / 3), GUILayout.Height(30)))
+        {
+            if (isSaveable)
+            {
+                SaveCharacterData();
+                isSaveable = false;
+                _window.Close();
+            }
+        }
+        else if (GUILayout.Button("Save", GUILayout.Width(Screen.width / 3), GUILayout.Height(30)))
+        {
+            if (isSaveable)
+            {
+                SaveCharacterData();
+                isSaveable = false;
+                _window.Close();
+            }
+        }
+
+        if (GUILayout.Button("Exit", GUILayout.Width(Screen.width / 3), GUILayout.Height(30)))
+        {
+
+            ExtraWindow confirmationWindow = (ExtraWindow)GetWindow(typeof(ExtraWindow));
+            confirmationWindow.titleContent = new GUIContent("Exit Confirmation");
+            _window.minSize = new Vector2(250, 200);
+            _window.Show();
+            EditorGUILayout.HelpBox("Are you sure you want to close without saving?", MessageType.Warning);
+
+            if (GUILayout.Button("Confirm", GUILayout.Height(30)))
+            {
+                _window.Close();
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    void SaveCharacterData()
+    {
+        _charIsSaved = true;
+    }
+}
+
+public class ExtraWindow: EditorWindow
+{
+
 }

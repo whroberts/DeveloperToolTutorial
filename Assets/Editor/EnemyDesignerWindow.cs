@@ -262,6 +262,11 @@ public class GeneralSettings: EditorWindow
     void DrawSettings(CharacterData charData)
     {
         EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Prefab");
+        charData._prefab = EditorGUILayout.ObjectField(charData._prefab, typeof(GameObject), false);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Max Health");
         charData._maxHealth = EditorGUILayout.FloatField(charData._maxHealth);
         EditorGUILayout.EndHorizontal();
@@ -278,12 +283,28 @@ public class GeneralSettings: EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("% Crit Chance");
-        charData._critChance = EditorGUILayout.Slider(charData._critChance, 1, charData._power);
+        charData._critChance = EditorGUILayout.Slider(charData._critChance, 0, charData._power);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Enemy Name");
         charData._name = EditorGUILayout.TextField(charData._name);
         EditorGUILayout.EndHorizontal();
+
+        if (charData._prefab == null)
+        {
+            EditorGUILayout.HelpBox("This enemy needs a [Prefab] before it can be created.", MessageType.Warning);
+        }
+
+        else if (GUILayout.Button("Finish & Save", GUILayout.Height(30)))
+        {
+            SaveCharacterData();
+            window.Close();
+        }
+    }
+
+    void SaveCharacterData()
+    {
+
     }
 }

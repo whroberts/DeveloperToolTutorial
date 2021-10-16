@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityEditor;
 using Types;
 
-public class EnemyDesignerWindow : EditorWindow
+public class EnemyDesignerWindow_Testing : EditorWindow
 {
     Texture2D _headerSectionTexture;
     Texture2D _mageSectionTexture;
     Texture2D _rogueSectionTexture;
     Texture2D _warriorSectionTexture;
+
+    Texture2D[] _textures;
 
     Color _headerSectionColor = new Color(13f / 255f, 32f / 255f, 44f / 255f, 1f);
 
@@ -18,19 +20,21 @@ public class EnemyDesignerWindow : EditorWindow
     Rect _rogueSection;
     Rect _warriorSection;
 
-    static MageData _mageData;
-    static RogueData _rogueData;
-    static WarriorData _warriorData;
+    Rect[] _sections;
 
-    public static MageData MageInfo { get { return _mageData; } }
-    public static RogueData RogueInfo { get { return _rogueData; } }
-    public static WarriorData WarriorInfo { get { return _warriorData; } }
+    static MageData _mageData_Testing;
+    static RogueData _rogueData_Testing;
+    static WarriorData _warriorData_Testing;
+
+    public static MageData MageInfo_Testing { get { return _mageData_Testing; } }
+    public static RogueData RogueInfo_Testing { get { return _rogueData_Testing; } }
+    public static WarriorData WarriorInfo_Testing { get { return _warriorData_Testing; } }
 
 
-    [MenuItem("Window/Enemy Designer")]
+    [MenuItem("Window/Enemy Designer Testing")]
     static void OpenWindow()
     {
-        EnemyDesignerWindow window = (EnemyDesignerWindow)GetWindow(typeof(EnemyDesignerWindow));
+        EnemyDesignerWindow_Testing window = (EnemyDesignerWindow_Testing)GetWindow(typeof(EnemyDesignerWindow_Testing));
         window.minSize = new Vector2(600, 300);
         window.Show();
     }
@@ -44,11 +48,11 @@ public class EnemyDesignerWindow : EditorWindow
         InitSectionVisuals();
         InitData();
     }
-    public static void InitData()
+    private static void InitData()
     {
-        _mageData = (MageData)ScriptableObject.CreateInstance(typeof(MageData));
-        _rogueData = (RogueData)ScriptableObject.CreateInstance(typeof(RogueData));
-        _warriorData = (WarriorData)ScriptableObject.CreateInstance(typeof(WarriorData));
+        _mageData_Testing = (MageData)ScriptableObject.CreateInstance(typeof(MageData));
+        _rogueData_Testing = (RogueData)ScriptableObject.CreateInstance(typeof(RogueData));
+        _warriorData_Testing = (WarriorData)ScriptableObject.CreateInstance(typeof(WarriorData));
     }
 
     /// <summary>
@@ -61,9 +65,12 @@ public class EnemyDesignerWindow : EditorWindow
         _headerSectionTexture.SetPixel(0, 0, _headerSectionColor);
         _headerSectionTexture.Apply();
 
-        _mageSectionTexture = Resources.Load<Texture2D>("icons/purple");
-        _rogueSectionTexture = Resources.Load<Texture2D>("icons/orange");
-        _warriorSectionTexture = Resources.Load<Texture2D>("icons/aqua");
+        _mageSectionTexture = Resources.Load<Texture2D>("icons/blue");
+        _rogueSectionTexture = Resources.Load<Texture2D>("icons/redOrange");
+        _warriorSectionTexture = Resources.Load<Texture2D>("icons/purple");
+
+        _textures = new Texture2D[] { _headerSectionTexture, _mageSectionTexture, _rogueSectionTexture, _warriorSectionTexture };
+        _sections = new Rect[] { _headerSection, _mageSection, _rogueSection, _warriorSection };
     }
 
     /// <summary>
@@ -73,7 +80,7 @@ public class EnemyDesignerWindow : EditorWindow
 
     private void OnGUI()
     {
-        DrawLayouts();
+        DrawSections();
         DrawHeader();
         DrawMageSettings();
         DrawWarriorSettings();
@@ -82,40 +89,36 @@ public class EnemyDesignerWindow : EditorWindow
 
     /// <summary>
     /// 
-    /// MANUAL
+    /// AUTOMATIC
     /// 
     /// Ddefines rect values and paints textures based on recks
     /// </summary>
+    /// 
 
-    void DrawLayouts()
+    void DrawSections()
     {
-        _headerSection.x = 0;
-        _headerSection.y = 0;
-        _headerSection.width = Screen.width;
-        _headerSection.height = 50;
+        _sections[0].x = 0;
+        _sections[0].y = 0;
+        _sections[0].width = Screen.width;
+        _sections[0].height = 50;
 
-        GUI.DrawTexture(_headerSection, _headerSectionTexture);
+        for (int i = 1; i < _sections.Length; i++)
+        {
+            _sections[i].x = (i - 1) * Screen.width / (_sections.Length - 1);
+            _sections[i].y = _sections[0].height;
+            _sections[i].width = Screen.width / (_sections.Length - 1);
+            _sections[i].height = Screen.height - _sections[0].height;
 
-        _mageSection.x = 0;
-        _mageSection.y = 50;
-        _mageSection.width = Screen.width / 3;
-        _mageSection.height = Screen.height - 50;
+            for (int j = 0; j <= i; j++)
+            {
+                GUI.DrawTexture(_sections[j], _textures[j]);
+            }
+        }
 
-        GUI.DrawTexture(_mageSection, _mageSectionTexture);
-
-        _rogueSection.x = Screen.width / 3;
-        _rogueSection.y = 50;
-        _rogueSection.width = Screen.width / 3;
-        _rogueSection.height = Screen.height - 50;
-
-        GUI.DrawTexture(_rogueSection, _rogueSectionTexture);
-
-        _warriorSection.x = 2 * Screen.width / 3;
-        _warriorSection.y = 50;
-        _warriorSection.width = Screen.width / 3;
-        _warriorSection.height = Screen.height - 50;
-
-        GUI.DrawTexture(_warriorSection, _warriorSectionTexture);
+        _headerSection = _sections[0];
+        _mageSection = _sections[1];
+        _rogueSection = _sections[2];
+        _warriorSection = _sections[3];
     }
 
     /// <summary>
@@ -126,7 +129,7 @@ public class EnemyDesignerWindow : EditorWindow
     {
         GUILayout.BeginArea(_headerSection);
         // {
-        GUILayout.Label("Enemy Designer");
+        GUILayout.Label("Enemy Designer Testing");
         // }
         GUILayout.EndArea();
     }
@@ -144,17 +147,17 @@ public class EnemyDesignerWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Damage");
-        _mageData._damageType = (MageDamageType) EditorGUILayout.EnumPopup(_mageData._damageType);
+        _mageData_Testing._damageType = (MageDamageType) EditorGUILayout.EnumPopup(_mageData_Testing._damageType);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Weapon");
-        _mageData._weaponType = (MageWeaponType)EditorGUILayout.EnumPopup(_mageData._weaponType);
+        _mageData_Testing._weaponType = (MageWeaponType)EditorGUILayout.EnumPopup(_mageData_Testing._weaponType);
         EditorGUILayout.EndHorizontal();
 
         if (GUILayout.Button("Create!", GUILayout.Height(40))) 
         {
-            GeneralSettings.OpenWindow(GeneralSettings.SettingsType.MAGE);
+            GeneralSettings_Testing.OpenWindow(GeneralSettings_Testing.SettingsType_Testing.MAGE);
         }
 
         // }
@@ -174,17 +177,17 @@ public class EnemyDesignerWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Class");
-        _warriorData._classType = (WarriorClassType)EditorGUILayout.EnumPopup(_warriorData._classType);
+        _warriorData_Testing._classType = (WarriorClassType)EditorGUILayout.EnumPopup(_warriorData_Testing._classType);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Weapon");
-        _warriorData._weaponType = (WarriorWeaponType)EditorGUILayout.EnumPopup(_warriorData._weaponType);
+        _warriorData_Testing._weaponType = (WarriorWeaponType)EditorGUILayout.EnumPopup(_warriorData_Testing._weaponType);
         EditorGUILayout.EndHorizontal();
 
         if (GUILayout.Button("Create!", GUILayout.Height(40)))
         {
-            GeneralSettings.OpenWindow(GeneralSettings.SettingsType.ROGUE);
+            GeneralSettings_Testing.OpenWindow(GeneralSettings_Testing.SettingsType_Testing.ROGUE);
         }
 
         // }
@@ -204,17 +207,17 @@ public class EnemyDesignerWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Weapon");
-        _rogueData._weaponType = (RogueWeaponType)EditorGUILayout.EnumPopup(_rogueData._weaponType);
+        _rogueData_Testing._weaponType = (RogueWeaponType)EditorGUILayout.EnumPopup(_rogueData_Testing._weaponType);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Strategy");
-        _rogueData._strategyType = (RogueStrategyType)EditorGUILayout.EnumPopup(_rogueData._strategyType);
+        _rogueData_Testing._strategyType = (RogueStrategyType)EditorGUILayout.EnumPopup(_rogueData_Testing._strategyType);
         EditorGUILayout.EndHorizontal();
 
         if (GUILayout.Button("Create!", GUILayout.Height(40)))
         {
-            GeneralSettings.OpenWindow(GeneralSettings.SettingsType.WARRIOR);
+            GeneralSettings_Testing.OpenWindow(GeneralSettings_Testing.SettingsType_Testing.WARRIOR);
         }
 
         // }
@@ -222,22 +225,22 @@ public class EnemyDesignerWindow : EditorWindow
     }
 }
 
-public class GeneralSettings: EditorWindow
+public class GeneralSettings_Testing: EditorWindow
 {
-    public enum SettingsType
+    public enum SettingsType_Testing
     {
         MAGE,
         ROGUE,
         WARRIOR
     }
 
-    static SettingsType dataSetting;
-    static GeneralSettings window;
+    static SettingsType_Testing dataSetting;
+    static GeneralSettings_Testing window;
 
-    public static void OpenWindow(SettingsType setting)
+    public static void OpenWindow(SettingsType_Testing setting)
     {
         dataSetting = setting;
-        window = (GeneralSettings)GetWindow(typeof(GeneralSettings));
+        window = (GeneralSettings_Testing)GetWindow(typeof(GeneralSettings_Testing));
         window.titleContent = new GUIContent(setting.ToString().Substring(0, 1) + setting.ToString().Substring(1).ToLower() + " Setup"); ;
         window.minSize = new Vector2(250, 200);
         window.Show();
@@ -247,14 +250,14 @@ public class GeneralSettings: EditorWindow
     {
         switch (dataSetting)
         {
-            case SettingsType.MAGE:
-                DrawSettings((CharacterData)EnemyDesignerWindow.MageInfo);
+            case SettingsType_Testing.MAGE:
+                DrawSettings((CharacterData)EnemyDesignerWindow_Testing.MageInfo_Testing);
                 break;
-            case SettingsType.ROGUE:
-                DrawSettings((CharacterData)EnemyDesignerWindow.RogueInfo);
+            case SettingsType_Testing.ROGUE:
+                DrawSettings((CharacterData)EnemyDesignerWindow_Testing.RogueInfo_Testing);
                 break;
-            case SettingsType.WARRIOR:
-                DrawSettings((CharacterData)EnemyDesignerWindow.WarriorInfo);
+            case SettingsType_Testing.WARRIOR:
+                DrawSettings((CharacterData)EnemyDesignerWindow_Testing.WarriorInfo_Testing);
                 break;
         }
     }
@@ -268,17 +271,19 @@ public class GeneralSettings: EditorWindow
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Max Energy");
-        charData._maxEnergy= EditorGUILayout.FloatField(charData._maxEnergy);
+        charData._maxEnergy = EditorGUILayout.FloatField(charData._maxEnergy);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.BeginVertical();
         GUILayout.Label("Power");
-        charData._power = EditorGUILayout.Slider(charData._power, 0, 100);
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal();
         GUILayout.Label("% Crit Chance");
-        charData._critChance = EditorGUILayout.Slider(charData._critChance, 1, charData._power);
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.BeginVertical();
+        charData._power = EditorGUILayout.Slider(charData._power, 0, 100);
+        charData._critChance = EditorGUILayout.Slider(charData._critChance, 0, charData._power);
+        EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();

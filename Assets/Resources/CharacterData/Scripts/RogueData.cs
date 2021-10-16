@@ -7,5 +7,5 @@ using Types;
 public class RogueData : CharacterData
 {
     public RogueWeaponType _weaponType;
-    public RogueStrategyType _stragegyType;
+    public RogueStrategyType _strategyType;
 }

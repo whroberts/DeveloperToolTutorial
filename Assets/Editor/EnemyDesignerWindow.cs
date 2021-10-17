@@ -230,14 +230,14 @@ public class EnemyDesignerWindow : EditorWindow
     {
         if (GUILayout.Button("Create", GUILayout.Height(40)))
         {
-            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
             SetupWindow.OpenSetupWindow(classType);
         }
         GUILayout.Space(5);
 
         if (GUILayout.Button("Load", GUILayout.Height(40)))
         {
-            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
             PopUpWindow.OpenPopUpWindow(PopUpWindow.WindowType.LOAD);
         }
     }

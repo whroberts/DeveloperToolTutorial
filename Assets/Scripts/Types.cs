@@ -46,4 +46,9 @@ namespace Types
         SPEED,
         NULL
     }
+
+    public enum NULL
+    {
+        NULL
+    }
 }

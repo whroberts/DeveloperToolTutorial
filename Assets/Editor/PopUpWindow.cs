@@ -25,7 +25,7 @@ public class PopUpWindow : EditorWindow
         _windowSetting = setting;
         _window = (PopUpWindow)GetWindow(typeof(PopUpWindow));
         _window.titleContent = new GUIContent(setting.ToString().Substring(0, 1) + setting.ToString().Substring(1).ToLower() + " Window");
-        _window.minSize = new Vector2(200, 200);
+        _window.minSize = new Vector2(200, 75);
         _window.Show();
     }
 

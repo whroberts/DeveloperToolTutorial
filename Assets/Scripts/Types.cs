@@ -7,37 +7,43 @@ namespace Types
     public enum MageDamageType
     {
         FIRE,
-        ICE
+        ICE,
+        NULL
     }
 
     public enum MageWeaponType
     {
         STAFF,
-        WAND
+        WAND,
+        NULL
     }
 
     public enum WarriorClassType
     {
         DEFENDER,
-        BERSERKER
+        BERSERKER,
+        NULL
     }
 
     public enum WarriorWeaponType
     {
         ONE_HANDED_SWORD,
         TWO_HANDED_SWORD,
-        DUAL_WIELDED_SWORDS
+        DUAL_WIELDED_SWORDS,
+        NULL
     }
 
     public enum RogueWeaponType
     {
         DAGGERS,
-        BOW
+        BOW,
+        NULL
     }
 
     public enum RogueStrategyType
     {
         STEALTH,
-        SPEED
+        SPEED,
+        NULL
     }
 }

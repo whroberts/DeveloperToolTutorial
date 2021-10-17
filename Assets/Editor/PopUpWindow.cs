@@ -9,34 +9,40 @@ public class PopUpWindow : EditorWindow
     public enum WindowType
     {
         CONFIRMATION,
-        ERROR
+        ERROR,
+        LOAD,
+        NULL
     }
 
-    static WindowType windowSetting;
-    static PopUpWindow window;
+    static WindowType _windowSetting;
+    static PopUpWindow _window;
 
-    private bool isConfirmed = false;
-    public bool IsConfirmed => isConfirmed;
+    private bool _isConfirmed = false;
+    public bool IsConfirmed => _isConfirmed;
 
     public static void OpenPopUpWindow(WindowType setting)
     {
-        windowSetting = setting;
-        window = (PopUpWindow)GetWindow(typeof(PopUpWindow));
-        window.titleContent = new GUIContent(setting.ToString().Substring(0, 1) + setting.ToString().Substring(1).ToLower() + " Window"); ;
-        window.minSize = new Vector2(200, 200);
-        window.maxSize = new Vector2(200, 200);
-        window.Show();
+        _windowSetting = setting;
+        _window = (PopUpWindow)GetWindow(typeof(PopUpWindow));
+        _window.titleContent = new GUIContent(setting.ToString().Substring(0, 1) + setting.ToString().Substring(1).ToLower() + " Window");
+        _window.minSize = new Vector2(200, 200);
+        _window.Show();
     }
 
     private void OnGUI()
     {
-        switch (windowSetting)
+        switch (_windowSetting)
         {
             case WindowType.CONFIRMATION:
                 DrawConfirmationPopUp();
                 break;
             case WindowType.ERROR:
                 DrawErrorPopUp();
+                break;
+            case WindowType.LOAD:
+                DrawLoadPopUp();
+                break;
+            case WindowType.NULL:
                 break;
         }
     }
@@ -48,13 +54,13 @@ public class PopUpWindow : EditorWindow
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Confirm", GUILayout.Height(30)))
         {
-            isConfirmed = true;
-            window.Close();
+            _isConfirmed = true;
+            _window.Close();
         }
         else if (GUILayout.Button("Cancel", GUILayout.Height(30)))
         {
-            isConfirmed = false;
-            window.Close();
+            _isConfirmed = false;
+            _window.Close();
         }
         EditorGUILayout.EndHorizontal();
     }
@@ -65,8 +71,13 @@ public class PopUpWindow : EditorWindow
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Okay", GUILayout.Height(30)))
         {
-            window.Close();
+            _window.Close();
         }
         EditorGUILayout.EndHorizontal();
+    }
+
+    private void DrawLoadPopUp()
+    {
+
     }
 }

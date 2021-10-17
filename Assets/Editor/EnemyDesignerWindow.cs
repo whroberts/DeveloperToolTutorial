@@ -144,6 +144,7 @@ public class EnemyDesignerWindow : EditorWindow
         // {
 
         GUILayout.Label("Mage");
+        GUILayout.Space(5);
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Damage");
@@ -158,11 +159,7 @@ public class EnemyDesignerWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
 
         GUILayout.Space(5);
-
-        if (GUILayout.Button("Create!", GUILayout.Height(40))) 
-        {
-            SetupWindow.OpenSetupWindow(SetupWindow.ClassType.MAGE);
-        }
+        CreateButtons(SetupWindow.ClassType.MAGE);
 
         // }
         GUILayout.EndArea();
@@ -171,32 +168,28 @@ public class EnemyDesignerWindow : EditorWindow
     /// <summary>
     /// Draws Rogue info
     /// </summary>
-
     void DrawRogueSettings()
     {
         GUILayout.BeginArea(_rogueSection);
         // {
 
         GUILayout.Label("Rogue");
-
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Class");
-        _warriorData._classType = (WarriorClassType)EditorGUILayout.EnumPopup(_warriorData._classType);
-        EditorGUILayout.EndHorizontal();
-
         GUILayout.Space(5);
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Weapon");
-        _warriorData._weaponType = (WarriorWeaponType)EditorGUILayout.EnumPopup(_warriorData._weaponType);
+        _rogueData._weaponType = (RogueWeaponType)EditorGUILayout.EnumPopup(_rogueData._weaponType);
         EditorGUILayout.EndHorizontal();
 
         GUILayout.Space(5);
 
-        if (GUILayout.Button("Create!", GUILayout.Height(40)))
-        {
-            SetupWindow.OpenSetupWindow(SetupWindow.ClassType.ROGUE);
-        }
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Strategy");
+        _rogueData._strategyType = (RogueStrategyType)EditorGUILayout.EnumPopup(_rogueData._strategyType);
+        EditorGUILayout.EndHorizontal();
+
+        GUILayout.Space(5);
+        CreateButtons(SetupWindow.ClassType.ROGUE);
 
         // }
         GUILayout.EndArea();
@@ -212,27 +205,40 @@ public class EnemyDesignerWindow : EditorWindow
         // {
 
         GUILayout.Label("Warrior");
+        GUILayout.Space(5);
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Class");
+        _warriorData._classType = (WarriorClassType)EditorGUILayout.EnumPopup(_warriorData._classType);
+        EditorGUILayout.EndHorizontal();
+
+        GUILayout.Space(5);
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Weapon");
-        _rogueData._weaponType = (RogueWeaponType)EditorGUILayout.EnumPopup(_rogueData._weaponType);
+        _warriorData._weaponType = (WarriorWeaponType)EditorGUILayout.EnumPopup(_warriorData._weaponType);
         EditorGUILayout.EndHorizontal();
 
         GUILayout.Space(5);
-
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Strategy");
-        _rogueData._strategyType = (RogueStrategyType)EditorGUILayout.EnumPopup(_rogueData._strategyType);
-        EditorGUILayout.EndHorizontal();
-
-        GUILayout.Space(5);
-
-        if (GUILayout.Button("Create!", GUILayout.Height(40)))
-        {
-            SetupWindow.OpenSetupWindow(SetupWindow.ClassType.WARRIOR);
-        }
+        CreateButtons(SetupWindow.ClassType.WARRIOR);
 
         // }
         GUILayout.EndArea();
+    }
+
+    void CreateButtons(SetupWindow.ClassType classType)
+    {
+        if (GUILayout.Button("Create", GUILayout.Height(40)))
+        {
+            AssetDatabase.SaveAssets();
+            SetupWindow.OpenSetupWindow(classType);
+        }
+        GUILayout.Space(5);
+
+        if (GUILayout.Button("Load", GUILayout.Height(40)))
+        {
+            AssetDatabase.SaveAssets();
+            PopUpWindow.OpenPopUpWindow(PopUpWindow.WindowType.LOAD);
+        }
     }
 }
